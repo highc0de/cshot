@@ -12,7 +12,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        packages.default = pkgs.stdenv.mkDerivation {
+        packages.default = pkgs.clangStdenv.mkDerivation {
           pname = "cshot";
           version = "0.1.0";
 
@@ -20,7 +20,6 @@
 
           nativeBuildInputs = with pkgs; [
             cmake
-            clang
             wayland-scanner
             pkg-config
           ];
@@ -32,15 +31,12 @@
             libxkbcommon
             expat
           ];
-
-          cmakeFlags = [
-            "-DCMAKE_C_COMPILER=clang"
-            "-DCMAKE_CXX_COMPILER=clang++"
-          ];
         };
 
         devShells.default = pkgs.mkShell {
           inputsFrom = [ self.packages.${system}.default ];
+
+          nativeBuildInputs = [ pkgs.clang-tools ];
 
           shellHook = ''
             echo "  cshot devenv"
@@ -51,7 +47,7 @@
             configure() {
               mkdir -p build
               cd build
-              cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+              cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=1
               cd ..
             }
 
