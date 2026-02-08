@@ -1,7 +1,5 @@
 #pragma once
 
-#include "common.h"
-
 /* Listener для seat */
 extern const struct wl_seat_listener seat_listener;
 
