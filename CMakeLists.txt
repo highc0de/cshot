@@ -87,6 +87,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     rt
 )
 
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+)
+
 add_custom_target(run
     COMMAND $<TARGET_FILE:${PROJECT_NAME}>
     DEPENDS ${PROJECT_NAME}
