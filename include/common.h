@@ -83,8 +83,6 @@ struct app_state {
     bool screencopy_called;
 };
 
-void stub();
-
-int max(int a, int b);
-
-int min(int a, int b);
+static inline int min_int(int a, int b) { return a < b ? a : b; }
+static inline int max_int(int a, int b) { return a > b ? a : b; }
+static inline void stub() {}

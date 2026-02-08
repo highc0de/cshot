@@ -57,8 +57,8 @@ cairo_status_t crop_and_save(struct app_state *app, struct output_state *os,
     }
 
     // Нормализация координат
-    int nx1 = min(x1, x2), ny1 = min(y1, y2);
-    int nx2 = max(x1, x2), ny2 = max(y1, y2);
+    int nx1 = min_int(x1, x2), ny1 = min_int(y1, y2);
+    int nx2 = max_int(x1, x2), ny2 = max_int(y1, y2);
     int w = nx2 - nx1, h = ny2 - ny1;
 
     if (w < 1 || h < 1) {

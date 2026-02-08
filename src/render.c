@@ -52,10 +52,10 @@ void render_output(struct output_state *os) {
 
     // Рисуем выделение (если есть)
     if (os->app->is_selecting || (os->app->start_x != os->app->ptr_x || os->app->start_y != os->app->ptr_y)) {
-        int x1 = min(os->app->start_x, os->app->ptr_x);
-        int y1 = min(os->app->start_y, os->app->ptr_y);
-        int x2 = max(os->app->start_x, os->app->ptr_x);
-        int y2 = max(os->app->start_y, os->app->ptr_y);
+        int x1 = min_int(os->app->start_x, os->app->ptr_x);
+        int y1 = min_int(os->app->start_y, os->app->ptr_y);
+        int x2 = max_int(os->app->start_x, os->app->ptr_x);
+        int y2 = max_int(os->app->start_y, os->app->ptr_y);
         int w = x2 - x1, h = y2 - y1;
         if (w == 0 || h == 0)  {
             cairo_destroy(cr);
