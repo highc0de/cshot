@@ -2,6 +2,7 @@
 #include "save.h"
 #include "shm.h"
 #include "render.h"
+#include "wayland-client-protocol.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -46,13 +47,30 @@ static void screencopy_buffer(void *data, struct zwlr_screencopy_frame_v1 *frame
     zwlr_screencopy_frame_v1_copy(frame, os->bg_buffer);
 }
 
+// Convert BGRA to ARGB if needed
+static void convert_bgra_to_argb(uint32_t *data, int width, int height) {
+    for (int i = 0; i < width * height; i++) {
+        uint32_t pixel = data[i];
+        data[i] = (pixel & 0xFF00FF00) | ((pixel & 0x00FF0000) >> 16) | ((pixel & 0x000000FF) << 16);
+    }
+}
+
 static void screencopy_ready(void *data, struct zwlr_screencopy_frame_v1 *frame,
                              uint32_t, uint32_t, uint32_t) {
     struct output_state *os = data;
     zwlr_screencopy_frame_v1_destroy(frame);
     os->sc_frame = nullptr;
 
-    // Создаем Cairo поверхность для фона
+    switch (os->format) {
+        case WL_SHM_FORMAT_BGRX8888:
+        case WL_SHM_FORMAT_BGRA8888:
+        case WL_SHM_FORMAT_XBGR8888:
+        case WL_SHM_FORMAT_ABGR8888:
+            convert_bgra_to_argb((uint32_t *)os->bg_data, os->width, os->height);
+            break;
+    }
+
+    // Create Cairo surface for background
     os->cairo_bg = cairo_image_surface_create_for_data(
         (unsigned char *)os->bg_data, CAIRO_FORMAT_ARGB32,
         os->width, os->height, os->stride);
