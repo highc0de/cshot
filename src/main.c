@@ -1,8 +1,11 @@
 #include "registry.h"
+#include "paths.h"
 #include "cleanup.h"
 #include <getopt.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <linux/limits.h>
 #include <string.h>
 #include <sys/signalfd.h>
 #include <unistd.h>
@@ -37,8 +40,19 @@ static bool read_args(struct app_state *app, int argc, char *argv[]) {
 	if (optind < argc - 1) {
 	    printf(usage);
         return false;
-	} else if (optind == argc - 1) {
-		app->f_path = argv[optind];
+	}
+
+	app->f_path = malloc(PATH_MAX);
+
+	if (optind == argc - 1) {
+        if (strcmp(argv[optind], "-") == 0) {
+            app->save_to_stdout = true;
+        } else {
+            app->save_to_stdout = false;
+            strcpy(app->f_path, argv[optind]);
+        }
+	} else {
+    	determine_save_path(app->f_path);
 	}
 
     return true;

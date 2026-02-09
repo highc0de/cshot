@@ -61,6 +61,7 @@ add_executable(${PROJECT_NAME}
     ${WAYLAND_PROTOCOL_SOURCES}
     src/cleanup.c
     src/input.c
+    src/paths.c
     src/registry.c
     src/render.c
     src/save.c

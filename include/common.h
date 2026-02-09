@@ -65,6 +65,7 @@ struct app_state {
     // Флаги
     char *f_output;
     char *f_path;
+    bool save_to_stdout;
 
     // Клавиатура
     struct xkb_context *xkb_ctx;

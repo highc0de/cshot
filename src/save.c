@@ -1,8 +1,7 @@
 #include "save.h"
 #include "cairo.h"
 #include <stdio.h>
-#include <string.h>
-#include <time.h>
+#include <linux/limits.h>
 #include <unistd.h>
 
 static cairo_status_t write_to_file(void *closure, const unsigned char *data,
@@ -19,30 +18,13 @@ cairo_status_t save(cairo_surface_t *surface, struct app_state *app,
         return CAIRO_STATUS_NULL_POINTER;
     }
 
-    char path[1024] = { 0 };
-    if (!app->f_path) {
-        FILE *user_dir = popen("xdg-user-dir PICTURES", "r");
-        if (user_dir) {
-            if (fgets(path, sizeof(path), user_dir)) {
-                path[strcspn(path, "\n")] = 0;
-            }
-            pclose(user_dir);
-        } else {
-            strcpy(path, ".");
-        }
-
-        time_t time_epoch = time(nullptr);
-        size_t path_len = strlen(path);
-        strftime(path + path_len, sizeof(path) - path_len - 1, "/%Y%m%d_%H%M%S_" PROJECT_NAME ".png", localtime(&time_epoch));
-    } else if (strcmp(app->f_path, "-") != 0) {
-        strcpy(path, app->f_path);
-    } else {
+    if (app->save_to_stdout) {
         return cairo_surface_write_to_png_stream(surface, write_to_file, stdout);
     }
 
-    FILE *fp = fopen(path, "wb");
+    FILE *fp = fopen(app->f_path, "wb");
     if (!fp) {
-        fprintf(stderr, "Failed to open %s\n", path);
+        fprintf(stderr, "Failed to open %s\n", app->f_path);
         return CAIRO_STATUS_WRITE_ERROR;
     }
 

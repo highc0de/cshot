@@ -60,4 +60,5 @@ void cleanup_app(struct app_state *app) {
     cleanup_ui(app);
 
     if (app->display) { wl_display_disconnect(app->display); app->display = nullptr; }
+    if (app->f_path) { free(app->f_path); app->f_path = nullptr; };
 }
