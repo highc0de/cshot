@@ -73,7 +73,7 @@ void render_output(struct output_state *os) {
         cairo_rectangle(cr, x1, y1, w, h);
         cairo_push_group(cr);
         cairo_set_line_width(cr, stroke);
-        cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 1.0); // цвет обводки
+        cairo_set_source_rgba(cr, os->app->outline_r, os->app->outline_b, os->app->outline_g, os->app->outline_a); // цвет обводки
         cairo_stroke_preserve(cr);
         cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
         cairo_fill(cr);

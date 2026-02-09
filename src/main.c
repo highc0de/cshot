@@ -16,7 +16,8 @@
 static const char usage[] =
 	"Usage: " PROJECT_NAME " [options...] [output-file]\n"
 	"  -h, --help            Show help message and quit\n"
-	"  -o, --output          Set the output name to capture\n";
+	"  -o, --output          Set the output name to capture\n"
+	"  -c, --color           Outline color (RGBA HEX, example: FF0000FF)\n";
 
 static bool read_args(struct app_state *app, int argc, char *argv[]) {
     int c;
@@ -25,15 +26,29 @@ static bool read_args(struct app_state *app, int argc, char *argv[]) {
     static struct option long_options[] = {
         {"help",   no_argument,       nullptr, 'h'},
         {"output", required_argument, nullptr, 'o'},
+        {"color",  required_argument, nullptr, 'c'},
         {nullptr,  0,                 nullptr,  0 }
     };
 
-    while ((c = getopt_long(argc, argv, "ho:", long_options, &option_index)) != -1) {
-        if (c == 'o') {
-            app->f_output = optarg;
-        } else {
-            printf(usage);
-            return false;
+    while ((c = getopt_long(argc, argv, "hoc:", long_options, &option_index)) != -1) {
+        switch (c) {
+            case 'h':
+                printf(usage);
+                return false;
+            case 'o':
+                app->f_output = optarg;
+                break;
+            case 'c':
+                const size_t opt_length = strlen(optarg);
+                if (opt_length != 8) {
+                    printf("--color has an invalid value length (%s), make sure it's RGBA", optarg);
+                }
+
+                unsigned long color = strtoul(optarg, NULL, 16);
+                app->outline_r = ((color >> 24) & 0xFF) / 255.0f;
+                app->outline_g = ((color >> 16) & 0xFF) / 255.0f;
+                app->outline_b = ((color >> 8) & 0xFF) / 255.0f;
+                app->outline_a = (color & 0xFF) / 255.0f;
         }
     }
 

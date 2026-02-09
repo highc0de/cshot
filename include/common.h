@@ -65,6 +65,7 @@ struct app_state {
     // Флаги
     char *f_output;
     char *f_path;
+    float outline_r, outline_g, outline_b, outline_a;
     bool save_to_stdout;
 
     // Клавиатура
